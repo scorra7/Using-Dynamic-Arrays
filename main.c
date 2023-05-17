@@ -17,8 +17,8 @@ void copyArray(int fromArray[], int toArray[], int size) {
 	}
 }
 
-// This will swap any two values with each other
-void swap(int* a, int* b)
+// This will swap values a to values b, and vice versa
+void swapValues(int* a, int* b)
 {
     int t = *a;
     *a = *b;
@@ -28,27 +28,42 @@ void swap(int* a, int* b)
 // This will partition the array from the pivot
 int partition(int array[], int low, int high)
 {
-    int pivot = array[low]; // Places the pivot on index 0
+    int pivot = array[low]; // Places the pivot on index 0, or left-most index
 
-    int k = high;
+    int afterPivot = high;
     for (int i = high; i > low; i--) {
-        if (array[i] > pivot)
-            swap(&array[i], &array[k--]);
-    }
-    swap(&array[low], &array[k]);
 
-    return k;
+        if (array[i] > pivot) {
+            swapValues(&array[i], &array[afterPivot]);
+			afterPivot--;
+		}
+    }
+    swapValues(&array[low], &array[afterPivot]);
+    return afterPivot;
 }
  
 
 void quickSort(int array[], int low, int high)
 {
     if (low < high) {
-        int pivotLoc = partition(array, low, high);
-         
-        quickSort(array, low, pivotLoc - 1);
-        quickSort(array, pivotLoc + 1, high);
+        int pivotLocation = partition(array, low, high);
+
+        quickSort(array, low, pivotLocation - 1);
+        quickSort(array, pivotLocation + 1, high);
     }
+}
+
+
+int countMatches(int dynamicArray[], int sortedArray[], int size) {
+	int count = 0;
+
+	for (int i = 0; i < size; i++) {
+		if (dynamicArray[i] == sortedArray[i]) {
+			count++;
+		}
+	}
+
+	return count;
 }
 
 
@@ -96,13 +111,11 @@ int main( void ) {
 	copyArray(dynamicArray, sortedArray, sizeOfArray);
 
 	/* Call function to sort one of the arrays. */
-	quickSort(sortedArray, 0, sizeOfArray);
+	quickSort(sortedArray, 0, sizeOfArray - 1);
 
-	printf("\n\n this is a quick sort function test\n\n");
-	for (int i = 0; i < sizeOfArray; i++) {
-		printf("%d -> ", sortedArray[i]);
-	}
 	/* Call function to count matches, and report results. */
+	int numMatches = countMatches(dynamicArray, sortedArray, sizeOfArray);
+	printf("Numbers already in sorted order = %d / %d = %.1f%%\n", numMatches, sizeOfArray, (((float)numMatches / sizeOfArray) * 100));
 	
 	/* Now check target numbers to see if they are in the list and where. */
 	
